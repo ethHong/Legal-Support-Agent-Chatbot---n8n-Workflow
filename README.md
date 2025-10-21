@@ -34,12 +34,11 @@ ADA law in the U.S. is nuanced and context-dependent. Navigating government site
 > • **Internet Search** via Traversaal →  
 > **OpenAI Chat** synthesis → Response to UI with sources & next-steps
 
-![System Design](System Design.png)
+<img width="3776" height="1984" alt="Image" src="https://github.com/user-attachments/assets/b016a4e1-f73d-4233-ac82-3213b5b2d844" />
 
-
+<img width="928" height="383" alt="Image" src="https://github.com/user-attachments/assets/98633f21-262d-4627-a495-a5c48ee5fded" />
 
 ![Agent Workflow](Agent Workflow.png)
-
 
 
 <img src="RAG Store.png" alt="System Design" style="zoom:50%;" />
