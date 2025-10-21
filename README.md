@@ -2,7 +2,7 @@
 
 
 
-# ADA & Legal Helper (LLM · AI PM Case)
+# ADA & Legal Helper (LLM Agent Workflow Product Design)
 
 **One-liner:** An AI-powered assistant that grounds ADA guidance in authoritative text and helps users gather the right facts *before* consulting an attorney.  
 **Role:** AI Product Manager & LLM Engineer · **Status:** MVP live  
