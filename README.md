@@ -77,12 +77,3 @@ ADA law in the U.S. is nuanced and context-dependent. Navigating government site
 
 ## Links
 - **Live App:** https://ada-law-bot.lovable.app/  
-- **RAG Endpoint (n8n Webhook):** `https://ethanhong.app.n8n.cloud/webhook/d82c3854-146b-4212-b94e-5b0ca8d7075b`  
-- **Demo Videos:** *(add links)*
-
-
-
-
-
-
-
