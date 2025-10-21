@@ -38,9 +38,6 @@ ADA law in the U.S. is nuanced and context-dependent. Navigating government site
 
 <img width="928" height="383" alt="Image" src="https://github.com/user-attachments/assets/98633f21-262d-4627-a495-a5c48ee5fded" />
 
-![Agent Workflow](Agent Workflow.png)
-
-
 <img src="RAG Store.png" alt="System Design" style="zoom:50%;" />
 
 ---
