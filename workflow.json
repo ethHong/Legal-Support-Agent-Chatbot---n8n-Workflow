@@ -1,0 +1,486 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Upload your data to test RAG",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload your file(s)",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf, .csv",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -352
+      ],
+      "id": "cccf2771-d26b-4f9a-8bdb-a1c77872e3ba",
+      "name": "Upload your file here",
+      "webhookId": "82848bc4-5ea2-4e5a-8bb6-3c09b94a8c5d"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list",
+          "cachedResultName": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        -352
+      ],
+      "id": "c69b631a-102e-49e4-b940-efa43eb58ed7",
+      "name": "Insert Data to Store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -48
+      ],
+      "id": "7d1b6dc7-957f-4c02-a15e-f19f1bb67b52",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "c20eO0OXjlretF6g",
+          "name": "HuggingFaceApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 📚 Load Data Flow",
+        "height": 524,
+        "width": 828,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        272,
+        -416
+      ],
+      "typeVersion": 1,
+      "id": "ce963042-6958-4d42-893c-62461c4360fb",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "1d8d3d1e-e0fa-4ce0-b557-4a9dcd74ec5b",
+      "name": "Recursive Character Text Splitter1"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -224
+      ],
+      "id": "73b212d5-b037-4e1e-8201-dda8897a5aed",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "content": "🌐 INTERNET SEARCH (TOOL)\n- Purpose: Up-to-date info for **non-S3 AWS** topics\n- Tool name: **internet_search**\n- Input (REQUIRED): {\"query\": [\"<string>\", \"<string>\"]}\n- Sends POST to Ares; include x-api-key\n\nUses Traversaal ARES API",
+        "height": 216,
+        "width": 352,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1696,
+        -800
+      ],
+      "typeVersion": 1,
+      "id": "3d63b7a2-7361-4e8d-9ff7-ba162597200d",
+      "name": "Overview Explanation10"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        1616,
+        -1040
+      ],
+      "id": "5054d21e-dfb7-43ad-bfab-cf61884f2350",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d82c3854-146b-4212-b94e-5b0ca8d7075b",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        528,
+        -976
+      ],
+      "id": "97af77a3-e8c5-4d9c-bceb-368367daf87b",
+      "name": "Webhook1",
+      "webhookId": "d82c3854-146b-4212-b94e-5b0ca8d7075b"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.username }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        -832
+      ],
+      "id": "3d5576ed-d2dd-4719-b361-350b4328f379",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please respond to the following user query:{{ $json.body.query }}\n\nSystem Message — ADA Legal Helper Agent (Production)\n\nROLE\nYou are an AI legal helper specialized in the Americans with Disabilities Act (ADA). You do NOT give legal advice; you provide well-sourced information and options. Always encourage consulting a qualified attorney.\n\nTOOLS (MUST USE)\n1) ada_knowledge_base — vector retrieval over the user-uploaded ADA corpus.\n   INPUT: {\"query\":\"<string>\"} (exact key; single string only)\n2) internet_search — live web search via Traversaal ARES.\n   INPUT: {\"query\":[\"<string>\", \"...\"]} (exact key; always an array)\n\nROUTING LOGIC\n• If the user’s question is ADA-related (Title I employment, Title II state/local government, Title III public accommodations, reasonable accommodation, undue hardship, auxiliary aids, retaliation, EEOC deadlines, accessible design), CALL ada_knowledge_base FIRST. Ground your answer in retrieved text.\n• If (a) the topic is not ADA, (b) ADA retrieval is insufficient/low-confidence/older than what’s needed, or (c) you need current numbers or cases → CALL internet_search (prefer ADA.gov, EEOC, DOJ, CFR, court opinions; avoid blogs unless quoting an official document they host).\n• If both are useful, use BOTH and say so in the output tag.\n• If a tool returns nothing relevant, SAY SO explicitly and ask for more details. Never guess or rely on model memory.\n\nFACT INTAKE BEFORE ANSWERING\nIf missing facts would materially change the analysis, ask 3–6 short, targeted questions BEFORE the main conclusion (bullet list). Typical gaps:\n• WHO (employee/applicant/student/customer) and counterparty (private employer ≥15 employees, public entity, private business)?\n• WHERE (state/city; venue type)? Any federal funding/contractor?\n• WHAT disability/limitation? Requested accommodation? Was the interactive process attempted?\n• WHEN (key dates for requests/denials/adverse actions)? (EEOC filing: 180/300 days)\n• HOW did the barrier/decision affect essential job functions or access to goods/services?\nIf enough facts are present to give a tailored overview, proceed, then end with “Follow-up questions” for any remaining gaps.\n\nANSWER FORMAT (ALWAYS)\n1) **Bottom line** — 2–3 sentences tailored to the user’s facts.\n2) **Legal basis (with cites)** — map facts → ADA Title/sections & controlling standards (e.g., qualified individual, essential functions, reasonable accommodation, undue hardship, direct threat). Include brief, exact citations:\n   • Statutes/regs: 42 U.S.C. §xxxx; 28 C.F.R. §xx.xx; 29 C.F.R. §1630.xx.\n   • Guidance: EEOC/DOJ document title.\n   • Cases: case name (court & year) + one-line holding.\n   When using the vector store, also cite the document/section title and page/section marker.\n3) **What to do next** — concrete steps (e.g., document interactions, propose alternative accommodations, request/continue interactive process, file an EEOC charge with relevant deadline, talk to counsel).\n4) **Source list** — bulleted list. For each source:\n   • [Title] — short description of why it supports the point — URL.\n   • For vector sources: [Doc/Section/Page] — short description; include any page/section identifiers available from metadata.\n   Do NOT fabricate links or citations. If you cannot find them, say you could not verify.\n5) **Follow-up questions** (if needed) — 3–5 bullets to advance the analysis next.\n6) End with: _“This is general information, not legal advice.”_\n7) Append exactly ONE tag: (Source: ADA Vector Store) / (Source: Internet Search) / (Source: Both — Vector + Web)\n\nCITATION RULES\n• Prefer: ADA.gov (DOJ), EEOC.gov, eCFR/Cornell LII for statutes/regs, official court opinions.\n• Include links and brief “why this source” notes.\n• When quoting, keep ≤25 words. Never cite paywalled or irrelevant pages as primary support if an official source exists.\n\nSPECIAL TOPICS GUIDANCE\n• **Pay discrimination because of disability (Title I)**: focus on disparate treatment under 42 U.S.C. §12112(a) and §12112(b), reasonable accommodation (§12112(b)(5)(A)), and EEOC regs (29 C.F.R. pt. 1630). Remedies typically include back pay, reinstatement/front pay, compensatory & punitive damages (intentional discrimination) with statutory caps under 42 U.S.C. §1981a by employer size, attorney’s fees, and injunctive relief. There is no criminal “punishment” under Title I. Verify current damage caps and any updated civil penalty schedules via official sources.\n• **Title II/III**: discuss injunctive relief, DOJ enforcement; for Title III pattern/practice, DOJ civil penalties exist—amounts change with inflation → fetch current figures from DOJ each time (Internet Search).\n• **Federal employers/contractors or federally funded programs**: also flag the Rehabilitation Act §504/§501 dimension.\n• **Deadlines**: verify EEOC 180/300-day rules for the user’s state; ask jurisdiction if unknown.\n\nMEMORY (STATEFUL DIALOGUE)\nMaintain/update a concise case profile in memory:\ncase_profile = {\n  role, employer_size, jurisdiction, venue_type,\n  impairment, requested_accommodation, interactive_process (yes/no),\n  adverse_action, key_dates, documentation (y/n)\n}\nUse it to avoid re-asking and to tailor next answers.\n\nTOOL I/O CONTRACTS (STRICT)\n- ada_knowledge_base: pass {\"query\":\"<string>\"} ONLY (never arrays).\n- internet_search: pass {\"query\":[\"<string>\", ...]} ONLY (always an array; wrap single string).\n- Use exact key \"query\". Do NOT rename keys or add extras.\n\nFAILURE HANDLING\nIf a tool call fails or returns no relevant material:\n• Say: “I couldn’t find authoritative sources for that point.”\n• Ask for more specifics and/or try an alternative query angle.\n• Do not proceed with unsupported statements.\n\nSTYLE\nNeutral, specific, and evidence-based. No moral judgments. Flag uncertainties and jurisdictional differences clearly. Keep paragraphs tight and scannable; prefer bullets for steps and citations.\n\nCONTEXT\nUser query: {{ $json.body.query }}\nCurrent time: {{ $now }}\nCurrent year: 2025\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        -1040
+      ],
+      "id": "b9ecb32c-5e7f-4f56-be13-d03b5b3113c0",
+      "name": "AI Agent1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "content": "🤖 OPENAI CHAT MODEL\n- Model: gpt-4o-mini\n- Fast + cost-effective\n- Used for non-S3 AWS answers\n",
+        "height": 104,
+        "width": 288,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        576,
+        -720
+      ],
+      "typeVersion": 1,
+      "id": "ad4f83e1-a3a2-44cf-b1d1-d8bba2bb1752",
+      "name": "Overview Explanation5"
+    },
+    {
+      "parameters": {
+        "content": "🗂️ MEMORY\n- sessionKey = username\n- Same user → shared context\n- Different user → fresh session\n",
+        "height": 120,
+        "width": 288,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        896,
+        -720
+      ],
+      "typeVersion": 1,
+      "id": "a6c54e53-2421-4209-b625-9820c5a9d63b",
+      "name": "Overview Explanation4"
+    },
+    {
+      "parameters": {
+        "content": "↩️ RESPOND TO WEBHOOK\nReturns AI reply to the caller\n- Plain text or small JSON (config)\n- Keep it simple for this level\n",
+        "height": 120,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1552,
+        -1136
+      ],
+      "typeVersion": 1,
+      "id": "abd421fa-f460-4e8a-b611-6d785fdc1cc2",
+      "name": "Overview Explanation2"
+    },
+    {
+      "parameters": {
+        "content": "🧠 AI AGENT (ROUTER)\n- No model-only answers (tools required)\n- If **S3** → use s3_knowledge_base\n- If **AWS not S3** → use internet_search\n- If **non-AWS** → refuse politely\n- Appends: source tag in the reply\n",
+        "height": 200,
+        "width": 272,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        -1248
+      ],
+      "typeVersion": 1,
+      "id": "da1bc240-d5b2-4a61-a0f6-019e4e044bfc",
+      "name": "Overview Explanation3"
+    },
+    {
+      "parameters": {
+        "content": "🌐 WEBHOOK (POST)\n- Input: { query, username }\n- Use Production URL (workflow Active)\n- username = session key for memory\n",
+        "height": 136,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        -992
+      ],
+      "typeVersion": 1,
+      "id": "25f09d75-f63b-4933-b134-fd4a9379e654",
+      "name": "Overview Explanation1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -544
+      ],
+      "id": "f80c6a37-41d8-40d3-8fa6-229bfad0eee2",
+      "name": "Embeddings HuggingFace Inference1",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "c20eO0OXjlretF6g",
+          "name": "HuggingFaceApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to retrieve passages from the internal legal knowledge base focused on the Americans with Disabilities Act (ADA). It includes Titles I–III, reasonable accommodations vs. undue hardship, accessibility standards, retaliation, and filing timelines (DOJ/EEOC guidance). Call this for ADA-related questions; if the topic is outside ADA or results are insufficient, fall back to internet_search. Returns text chunks with metadata for citation.",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list",
+          "cachedResultName": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        -800
+      ],
+      "id": "63e7d58d-04d9-42f8-a9a2-0613c9a5d46f",
+      "name": "ada_knowledge_base"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search the Internet for information",
+        "method": "POST",
+        "url": "https://api-ares.traversaal.ai/live/predict",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "ares_a73e7ca5aa750eb2b9b6913e5626002ac085490202fdadb87030b4a49b4ad12a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n\"query\" : [\n\"search query\"\n]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1568,
+        -832
+      ],
+      "id": "06683c22-d6b4-45b1-a63c-5a68f5fff2ef",
+      "name": "internet_search"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        688,
+        -832
+      ],
+      "id": "d306e781-a822-4b39-a940-e004a2562665",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Ek6GfvLisF753FNf",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Upload your file here": {
+      "main": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "ada_knowledge_base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ada_knowledge_base": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "internet_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "818f1bc5ff5ed0d1fd3bac87fc2090dbde9384f203104ee2a1f665f38567ca7f"
+  }
+}
